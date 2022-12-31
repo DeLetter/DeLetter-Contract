@@ -4,12 +4,16 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
 contract DeLetterBase {
+
     struct addressList {
         address owner;
         string arweaveAddress;
     }
 
     mapping(address => addressList) public _addressList;
+
+    event ArweaveAddressSet(address indexed owner, string arweaveAddress);
+    event ArweaveAddressUpdated(address indexed owner, string arweaveAddress);
 
     constructor() {}
 
@@ -28,6 +32,7 @@ contract DeLetterBase {
         );
         _addressList[msg.sender].owner = msg.sender;
         _addressList[msg.sender].arweaveAddress = _arweaveAddress;
+        emit ArweaveAddressSet(msg.sender, _arweaveAddress);
     }
 
     function updateArweaveAddress(string memory _arweaveAddress)
@@ -38,5 +43,6 @@ contract DeLetterBase {
             "Only owner can update"
         );
         _addressList[msg.sender].arweaveAddress = _arweaveAddress;
+        emit ArweaveAddressUpdated(msg.sender, _arweaveAddress);
     }
 }
