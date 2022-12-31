@@ -1,10 +1,10 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-// import 'hardhat/console.sol';
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "hardhat/console.sol";
 
-contract DeLetterBase is Ownable {
+contract DeLetterBase {
+
     struct addressList {
         address owner;
         string arweaveAddress;
@@ -12,28 +12,37 @@ contract DeLetterBase is Ownable {
 
     mapping(address => addressList) public _addressList;
 
+    event ArweaveAddressSet(address indexed owner, string arweaveAddress);
+    event ArweaveAddressUpdated(address indexed owner, string arweaveAddress);
+
     constructor() {}
 
-    function setArweaveAddress(address _owner, string memory _arweaveAddress)
-        external
-        onlyOwner
-    {
-        _addressList[msg.sender].owner = _owner;
+    modifier onlyOwner() {
+        require(
+            msg.sender == _addressList[msg.sender].owner,
+            "Only owner can update"
+        );
+        _;
+    }
+
+    function setArweaveAddress(string memory _arweaveAddress) external {
+        require(
+            bytes(_addressList[msg.sender].arweaveAddress).length == 0,
+            "Arweave address already set"
+        );
+        _addressList[msg.sender].owner = msg.sender;
         _addressList[msg.sender].arweaveAddress = _arweaveAddress;
+        emit ArweaveAddressSet(msg.sender, _arweaveAddress);
     }
 
-    function getArweaveAddress(address _owner)
+    function updateArweaveAddress(string memory _arweaveAddress)
         external
-        view
-        returns (string memory)
     {
-        return _addressList[_owner].arweaveAddress;
-    }
-
-    function updateArweaveAddress(address _owner, string memory _arweaveAddress)
-        external
-        onlyOwner
-    {
-        _addressList[_owner].arweaveAddress = _arweaveAddress;
+        require(
+            msg.sender == _addressList[msg.sender].owner,
+            "Only owner can update"
+        );
+        _addressList[msg.sender].arweaveAddress = _arweaveAddress;
+        emit ArweaveAddressUpdated(msg.sender, _arweaveAddress);
     }
 }
