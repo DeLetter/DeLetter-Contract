@@ -1,7 +1,7 @@
 import { HardhatUserConfig } from "hardhat/types";
+import '@typechain/hardhat'
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-etherscan";
-import "hardhat-typechain";
 import "hardhat-deploy";
 import "solidity-coverage";
 import { config as dotEnvConfig } from "dotenv";

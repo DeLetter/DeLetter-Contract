@@ -21,14 +21,6 @@ contract DeLetterBase {
         _;
     }
 
-    modifier checkArweave() {
-        require(
-            bytes(_addressList[msg.sender].arweaveAddress).length > 0,
-            "Arweave address not set"
-        );
-        _;
-    }
-
     function setArweaveAddress(string memory _arweaveAddress) external {
         require(
             bytes(_addressList[msg.sender].arweaveAddress).length == 0,
@@ -40,9 +32,11 @@ contract DeLetterBase {
 
     function updateArweaveAddress(string memory _arweaveAddress)
         external
-        onlyOwner
-        checkArweave
     {
+        require(
+            msg.sender == _addressList[msg.sender].owner,
+            "Only owner can update"
+        );
         _addressList[msg.sender].arweaveAddress = _arweaveAddress;
     }
 }

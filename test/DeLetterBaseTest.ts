@@ -1,29 +1,49 @@
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signer";
 import { ethers } from "hardhat";
 import { solidity } from "ethereum-waffle";
 import chai from "chai";
-import { DeLetterBase } from "../typechain/DeLetterBase";
+import { DeLetterBase } from "../typechain-types/DeLetterBase";
 
 chai.use(solidity);
 const { expect } = chai;
 
 describe("DeLetterBase", () => {
   let deLetterBase: DeLetterBase;
-  let addr1: SignerWithAddress;
+  let addr1: any;
+  let addr2: any;
 
   beforeEach(async () => {
-    [addr1] = await ethers.getSigners();
+    [addr1, addr2] = await ethers.getSigners();
     const DeLetterBaseFactory = await ethers.getContractFactory("DeLetterBase");
     deLetterBase = (await DeLetterBaseFactory.deploy()) as DeLetterBase;
     await deLetterBase.deployed();
   });
 
-  it("Should allow user to set arweave address", async () => {
-    expect(await deLetterBase.connect(addr1).setArweaveAddress("test")).to.not
-      .reverted;
+  it("Should set a new addressList struct for user", async () => {
+    console.log(addr1.address);
+    await deLetterBase.connect(addr1).setArweaveAddress("test");
+    console.log(await deLetterBase._addressList(addr1.address));
+    expect((await deLetterBase._addressList(addr1.address)).owner).to.equal(
+      addr1.address
+    );
   });
-  //   it("Should allow user to check arweave address", async () => {
-  //     await deLetterBase.setArweaveAddress("test");
-  //     expect(await deLetterBase._addressList(addr1)).to.equal("test");
-  //   });
+
+  it("Should allow user to update existing struct", async () => {
+    await deLetterBase.connect(addr1).setArweaveAddress("test");
+    await deLetterBase.connect(addr1).updateArweaveAddress("test2");
+    expect(
+      (await deLetterBase._addressList(addr1.address)).arweaveAddress
+    ).to.equal("test2");
+  });
+
+  it("Should not allow user to create multiple list: arweaveAddress issue", async () => {
+    await deLetterBase.connect(addr1).setArweaveAddress("test");
+    await expect(
+      deLetterBase.connect(addr1).setArweaveAddress("test")
+    ).to.be.revertedWith("Arweave address already set");
+  });
+  it("Should not allow user updating empty struct", async () => {
+    await expect(deLetterBase.updateArweaveAddress("test")).to.be.revertedWith(
+      "Only owner can update"
+    );
+  });
 });
