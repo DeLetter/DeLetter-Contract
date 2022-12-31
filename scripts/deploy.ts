@@ -1,10 +1,10 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const Greeter = await ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("hai");
-  await greeter.deployed();
-  console.log("Greeter address:", greeter.address); // eslint-disable-line no-console
+  const DeLetterBase = await ethers.getContractFactory("DeLetterBase");
+  const deLetterBase = await DeLetterBase.deploy();
+  await deLetterBase.deployed();
+  console.log("DeLetterBase address:", deLetterBase.address); // eslint-disable-line no-console
 }
 
 main()

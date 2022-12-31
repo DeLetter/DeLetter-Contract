@@ -3,16 +3,18 @@
     {
       "files": "*.sol",
       "options": {
-        "printWidth": 125,
+        "printWidth": 80,
         "tabWidth": 4,
         "useTabs": false,
         "singleQuote": false,
         "bracketSpacing": false,
-        "explicitTypes": "preserve"
       }
     },
     {
-      "files": ["*.js", "*.md"],
+      "files": [
+        "*.js",
+        "*.md"
+      ],
       "options": {
         "printWidth": 100,
         "semi": true,
@@ -22,7 +24,10 @@
       }
     },
     {
-      "files": ["*.js", "*.json"],
+      "files": [
+        "*.js",
+        "*.json"
+      ],
       "options": {
         "useTabs": true
       }
