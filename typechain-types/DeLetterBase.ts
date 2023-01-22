@@ -12,7 +12,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -62,8 +66,38 @@ export interface DeLetterBaseInterface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "ArweaveAddressSet(address,string)": EventFragment;
+    "ArweaveAddressUpdated(address,string)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "ArweaveAddressSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ArweaveAddressUpdated"): EventFragment;
 }
+
+export interface ArweaveAddressSetEventObject {
+  owner: string;
+  arweaveAddress: string;
+}
+export type ArweaveAddressSetEvent = TypedEvent<
+  [string, string],
+  ArweaveAddressSetEventObject
+>;
+
+export type ArweaveAddressSetEventFilter =
+  TypedEventFilter<ArweaveAddressSetEvent>;
+
+export interface ArweaveAddressUpdatedEventObject {
+  owner: string;
+  arweaveAddress: string;
+}
+export type ArweaveAddressUpdatedEvent = TypedEvent<
+  [string, string],
+  ArweaveAddressUpdatedEventObject
+>;
+
+export type ArweaveAddressUpdatedEventFilter =
+  TypedEventFilter<ArweaveAddressUpdatedEvent>;
 
 export interface DeLetterBase extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -140,7 +174,25 @@ export interface DeLetterBase extends BaseContract {
     ): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    "ArweaveAddressSet(address,string)"(
+      owner?: PromiseOrValue<string> | null,
+      arweaveAddress?: null
+    ): ArweaveAddressSetEventFilter;
+    ArweaveAddressSet(
+      owner?: PromiseOrValue<string> | null,
+      arweaveAddress?: null
+    ): ArweaveAddressSetEventFilter;
+
+    "ArweaveAddressUpdated(address,string)"(
+      owner?: PromiseOrValue<string> | null,
+      arweaveAddress?: null
+    ): ArweaveAddressUpdatedEventFilter;
+    ArweaveAddressUpdated(
+      owner?: PromiseOrValue<string> | null,
+      arweaveAddress?: null
+    ): ArweaveAddressUpdatedEventFilter;
+  };
 
   estimateGas: {
     _addressList(
